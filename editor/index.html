@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>vee</title>
+		<link rel="stylesheet" href="./style.css" />
+
+		<script src="./assets/vue.js"></script>
+		<script src="editor.js"></script>
+	</head>
+	<body>
+		<header id="header">
+			<span id="lineDetails">L {{ lineNumber }}, C {{ column }}</span>
+			<span class="file" v-if="selectedFile">
+				{{selectedFile.isSaved ? '' : '*'}}{{ selectedFile.uri.scheme === 'inmemory' ? "unsaved" : selectedFile.name+selectedFile.ext }}
+			</span>
+			<span class="dir" v-if="selectedFile">
+				{{ selectedFile.uri.scheme === 'inmemory' ? "" : " - "+selectedFile.dir.split('/').reverse()[0] }}
+			</span>
+			<!-- <span class="file">hello.js</span> - <span class="dir">mas</span> -->
+			<ul id="select">
+				<li v-for="file in files" v-bind:id="file.id">
+					<span class="file">{{getViewFile(file)}}</span>
+					<span class="dir">{{getViewDir(file)}}</span>
+				</li>
+			</ul>
+		</header>
+		<div id="editorWrap">
+			<div id="editor"></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,67 @@
+{
+  "name": "vee",
+  "version": "1.0.0",
+  "description": "A minimal code editor based on Microsoft's monaco editor.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasanthv/vee.git"
+  },
+  "keywords": [
+    "electron",
+    "code",
+    "editor"
+  ],
+  "author": "Vasanth V",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/vasanthv/vee/issues"
+  },
+  "homepage": "https://github.com/vasanthv/vee#readme",
+  "devDependencies": {
+    "electron": "^2.0.5",
+    "electron-builder": "^20.22.0"
+  },
+  "build": {
+    "appId": "vee.editor",
+    "productName": "vee",
+    "copyright": "Copyright © year ${author}",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "./build/icon.icns",
+      "fileAssociations": [
+        { "ext": "js", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "ts", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "md", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "sh", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "css", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "log", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "txt", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "map", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "php", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "sql", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "jsx", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "xml", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "html", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "json", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "scss", "role": "Editor", "icon": "./build/icon.icns" },
+        { "ext": "less", "role": "Editor", "icon": "./build/icon.icns" }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": true,
+      "installerHeaderIcon": "./build/icon.ico"
+    }
+  },
+  "dependencies": {
+    "monaco-editor": "^0.13.1",
+    "monaco-loader": "^0.13.0"
+  }
+}
