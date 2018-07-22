@@ -28,19 +28,18 @@ header{
     height:25px;
     text-align: center;
     line-height: 25px;
-    position: relative;
     visibility: hidden;
+    font-weight: 300;
 }
 header #select{
     position: absolute;
-    left:50%;
-    top:30px;
+    top:7px;
+    right:8px;
+    bottom: 0px;
     background: #20212b;
     z-index: 5;
     min-width:150px;
-    min-height: 200px;
-    margin-left:-75px;
-    border-radius: 5px;
+    min-height: 100%;
     font-size: 14px;
     padding:2.5px 0px;
     text-align: left;
@@ -63,6 +62,9 @@ header .dir{
     font-size: 13px;
     opacity: 0.5;
     font-style: italic;
+}
+header #lineWrap{
+    position: relative;
 }
 header span#lineDetails{
     position: absolute;

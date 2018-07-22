@@ -2,29 +2,40 @@
 /**
  * This is the view file which uses the vue.js
  */
+
+const {parse} = require('path');
 module.exports = () => {
     return new Vue({
         el: '#header',
         data: {
             lineNumber: 0,
             column: 0,
-            selectedFile: null,
             files: []
         },
         methods: {
-            setSelected: function () {
-                const selectedFile = this.files.find(f => f.selected);
-                this.selectedFile = selectedFile;
-                return selectedFile;
+            getFileById: function (id) {
+                return this.files.find(f => f.id == id);
             },
             getIndexById: function (id) {
                 return this.files.findIndex(f => f.id == id);
             },
             getViewFile: function (file)  {
-                return (file.isSaved ? '' : '*') + (file.uri.scheme === 'inmemory' ? "unsaved" : file.name+file.ext);
+                if(file){
+                    const filePath = file.path && parse(file.path);
+                    return (file.isSaved ? '' : '*') + (filePath ? filePath.base : "new");
+                }
             },
             getViewDir: function (file)  {
-                return file.uri.scheme === 'inmemory' ? "" : " - "+file.dir.split('/').reverse()[0];
+                if(file){
+                    const filePath = file.path && parse(file.path);
+                    return filePath ? " - "+filePath.dir.split('/').reverse()[0] : "";
+                }
+            },
+            getSelected: function (){
+                return this.files.find(f => f.selected == true);
+            },
+            fileClick: function (file) {
+                loadModel(file.model);
             }
           }
     });    

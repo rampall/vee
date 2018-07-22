@@ -1,14 +1,19 @@
 const {app, BrowserWindow, ipcMain, dialog} = require('electron');
 const fs = require('fs');
 const path = require('path');
-let mainWindow;
+let mainWindow, initialLoadFile;
 
 function createWindow () {
     mainWindow = new BrowserWindow({width: 780, height: 720, titleBarStyle: 'hidden'});
     mainWindow.loadFile(path.join(__dirname,'editor/index.html'));
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // if(process.env.NODE_ENV != 'production')
+    // mainWindow.webContents.openDevTools();
+
+    //load the initial file
+    if(initialLoadFile)
+    mainWindow.webContents.send('load-file', initialLoadFile);
 
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -34,9 +39,19 @@ app.on('activate', function () {
     }
 });
 
-// On Windows, you have to parse process.argv (in the main process) to get the filepath.
-app.on('open-file', function (event) {
-    console.log(event);
+// On Windows, you have to parse process.argv in the main process) to get the filepath.
+app.on('open-file', function (event, fsPath) {
+    const fileObject = {
+        path:fsPath, 
+        language: extToLang[path.extname(fsPath)],
+        data: fs.readFileSync(fsPath).toString()
+    };
+    if(mainWindow){
+        mainWindow.webContents.send('load-file', fileObject);
+    }else{
+        initialLoadFile = fileObject;
+    }
+    event.preventDefault();
 });
 
 
@@ -45,19 +60,31 @@ app.on('open-file', function (event) {
  */
 ipcMain.on('open-file', (event) => {
     const selectedFiles = dialog.showOpenDialog({properties: ['openFile', 'multiSelections']});
-    selectedFiles.forEach(f => {
-        const fileObject = {
-            path:f, 
-            ext: extToLang[path.extname(f)],
-            data: fs.readFileSync(f).toString()
-        };
+    if(selectedFiles){
+        selectedFiles.forEach(f => {
+            const fileObject = {
+                path:f, 
+                language: extToLang[path.extname(f)],
+                data: fs.readFileSync(f).toString()
+            };
 
-        event.sender.send('load-file', fileObject);
-    });
-    console.log('Open a file');
+            event.sender.send('load-file', fileObject);
+        });
+    }
 });
 
-
+ipcMain.on('save-file', (event, payload) => {
+    try{
+        fs.writeFileSync(payload.path, payload.data, { flag: 'w' });
+        event.returnValue = {
+            id: payload.modelId,
+            language: extToLang[path.extname(payload.path)],
+        };
+    }catch(err){
+        console.log(err);
+        event.returnValue = false;
+    }
+});
 /**
  * This Object has a mapping of the extension to language for loading the editor
  */
@@ -65,5 +92,13 @@ ipcMain.on('open-file', (event) => {
 const extToLang = {
     '.js': 'javascript',
     '.css': 'css',
-    '.html': 'html'
+    '.html': 'html',
+    '.md': 'markdown',
+    '.xml': 'xml',
+    '.json': 'json',
+    '.txt': 'plaintext',
+    '.scss': 'scss',
+    '.sql': 'sql',
+    '.ts': 'typescript',
+    '.yaml': 'yaml'
 }

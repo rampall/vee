@@ -1,6 +1,6 @@
 {
   "name": "vee",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "A minimal code editor based on Microsoft's monaco editor.",
   "main": "main.js",
   "scripts": {
@@ -36,22 +36,86 @@
       "category": "public.app-category.developer-tools",
       "icon": "./build/icon.icns",
       "fileAssociations": [
-        { "ext": "js", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "ts", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "md", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "sh", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "css", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "log", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "txt", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "map", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "php", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "sql", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "jsx", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "xml", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "html", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "json", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "scss", "role": "Editor", "icon": "./build/icon.icns" },
-        { "ext": "less", "role": "Editor", "icon": "./build/icon.icns" }
+        {
+          "ext": "js",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "ts",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "md",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "sh",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "css",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "log",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "txt",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "map",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "php",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "sql",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "jsx",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "xml",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "html",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "json",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "scss",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        },
+        {
+          "ext": "less",
+          "role": "Editor",
+          "icon": "./build/icon.icns"
+        }
       ]
     },
     "nsis": {
@@ -62,6 +126,7 @@
   },
   "dependencies": {
     "monaco-editor": "^0.13.1",
-    "monaco-loader": "^0.13.0"
+    "monaco-loader": "^0.13.0",
+    "mousetrap": "^1.6.2"
   }
 }
