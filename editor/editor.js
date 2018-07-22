@@ -193,9 +193,18 @@ const saveFileInEditor = () => {
 const saveFile = (payload) => {
     //save file synchronously to avoid race condtion
     const response = ipcRenderer.sendSync('save-file', payload);
-    const file = view.getFileById(response.id);
-    vee.editor.setModelLanguage(file.model, response.language); // set the language of the save file
-    file.isSaved = true; // mark the file as saved
+    if(response.error){
+        console.error(response.error);
+        remote.dialog.showMessageBox({
+            title: "Error while saving the file",
+            message: "Error while saving the file"
+        });
+    }else{
+        const file = view.getFileById(response.id);
+        vee.editor.setModelLanguage(file.model, response.language); // set the language of the save file
+        editor.setValue(response.data);
+        file.isSaved = true; // mark the file as saved
+    }
 }
 const nextOpenedFile = () => {
     document.querySelector('header #select').style.display = 'block';

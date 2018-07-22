@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain, dialog} = require('electron');
 const fs = require('fs');
 const path = require('path');
+const prettier = require("prettier");
 let mainWindow, initialLoadFile;
 
 function createWindow () {
@@ -9,7 +10,7 @@ function createWindow () {
 
     // Open the DevTools.
     // if(process.env.NODE_ENV != 'production')
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     //load the initial file
     if(initialLoadFile)
@@ -75,14 +76,15 @@ ipcMain.on('open-file', (event) => {
 
 ipcMain.on('save-file', (event, payload) => {
     try{
-        fs.writeFileSync(payload.path, payload.data, { flag: 'w' });
+        const data = prettier.format(payload.data, prettierConfig);
+        fs.writeFileSync(payload.path, data, { flag: 'w' });
         event.returnValue = {
             id: payload.modelId,
             language: extToLang[path.extname(payload.path)],
+            data: data
         };
     }catch(err){
-        console.log(err);
-        event.returnValue = false;
+        event.returnValue = {error: err};
     }
 });
 /**
@@ -101,4 +103,13 @@ const extToLang = {
     '.sql': 'sql',
     '.ts': 'typescript',
     '.yaml': 'yaml'
+}
+
+// Prettier configuration
+const prettierConfig = {
+    printWidth: 100,
+    tabWidth: 4,
+    useTabs: true,
+    singleQuote: true,
+
 }
