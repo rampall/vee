@@ -1,56 +1,82 @@
+const background = '282A36';
+const currentLine = '313342';
+const selection = '45485f';
+const foreground = 'EDEDE9';
+const comment = '586694';
+const red = 'CC6666';
+const orange = 'DE935F';
+const yellow = 'EBEF8C';
+const green = '2ECC71';
+const aqua = '56AFC6';
+const blue = '81A2BE';
+const purple = 'CF66AA';
+
 module.exports = {
   name: 'vee',
   base: 'vs-dark',
   inherit: true,
   rules: [
-		{ token: '', foreground: 'D4D4D4', background: '1E1E1E' },
-		{ token: 'invalid', foreground: 'f44747' },
+		{ token: '', foreground: foreground, background: background },
+		{ token: 'invalid', foreground: red },
 		{ token: 'emphasis', fontStyle: 'italic' },
 		{ token: 'strong', fontStyle: 'bold' },
 
-		{ token: 'variable', foreground: '74B0DF' },
-		{ token: 'variable.predefined', foreground: '4864AA' },
-		{ token: 'variable.parameter', foreground: '9CDCFE' },
-		{ token: 'constant', foreground: '569CD6' },
-		{ token: 'comment', foreground: '608B4E' },
-		{ token: 'number', foreground: 'B5CEA8' },
-		{ token: 'number.hex', foreground: '5BB498' },
-		{ token: 'regexp', foreground: 'B46695' },
-		{ token: 'annotation', foreground: 'cc6666' },
-		{ token: 'type', foreground: '3DC9B0' },
+		{ token: 'identifier', foreground: foreground },
+		{ token: 'identifier.name.type', foreground: red },
 
-		{ token: 'delimiter', foreground: 'DCDCDC' },
-		{ token: 'delimiter.html', foreground: '808080' },
-		{ token: 'delimiter.xml', foreground: '808080' },
+		{ token: 'variable', foreground: purple },
+		{ token: 'variable.predefined', foreground: 'BE5046' },
+		{ token: 'variable.parameter', foreground: 'ABB2BF' },
 
-		{ token: 'tag', foreground: '569CD6' },
-		{ token: 'tag.id.jade', foreground: '4F76AC' },
-		{ token: 'tag.class.jade', foreground: '4F76AC' },
+		{ token: 'constant', foreground: green },
+		{ token: 'comment', foreground: comment, fontStyle: "italic"},
+		{ token: 'number', foreground: orange },
+		{ token: 'number.hex', foreground: orange },
+		{ token: 'regexp', foreground: green },
+		{ token: 'annotation', foreground: 'C678DD' },
+		{ token: 'type', foreground: 'E5C07B' },
+
+		{ token: 'delimiter', foreground: aqua }, // delimiter includes all brackets etc
+		{ token: 'delimiter.array', foreground: foreground }, // delimiter brackets. takes only curly braces
+		{ token: 'delimiter.bracket', foreground: foreground }, // delimiter brackets. takes only curly braces
+		{ token: 'delimiter.parenthesis', foreground: foreground }, // delimiter brackets. takes only round braces		
+		{ token: 'delimiter.angle', foreground: foreground }, // delimiter brackets. takes only <> braces		
+		
+		{ token: 'delimiter.html', foreground: foreground },
+		{ token: 'delimiter.xml', foreground: foreground },
+
+		{ token: 'tag', foreground: red },
+		{ token: 'tag.id.jade', foreground: red },
+		{ token: 'tag.class.jade', foreground: red },
+
 		{ token: 'meta.scss', foreground: 'A79873' },
-		{ token: 'meta.tag', foreground: 'CE9178' },
-		{ token: 'metatag', foreground: 'DD6A6F' },
-		{ token: 'metatag.content.html', foreground: '9CDCFE' },
-		{ token: 'metatag.html', foreground: '569CD6' },
-		{ token: 'metatag.xml', foreground: '569CD6' },
+		{ token: 'meta.tag', foreground: 'ABB2BF' },
+
+		{ token: 'metatag', foreground: yellow },
+		{ token: 'metatag.content.html', foreground: aqua },
+		{ token: 'metatag.html', foreground: blue },
+		{ token: 'metatag.xml', foreground: blue },
 		{ token: 'metatag.php', fontStyle: 'bold' },
 
-		{ token: 'key', foreground: '9CDCFE' },
-		{ token: 'string.key.json', foreground: '9CDCFE' },
-		{ token: 'string.value.json', foreground: 'CE9178' },
+		{ token: 'key', foreground: aqua },
+		{ token: 'string.key.json', foreground: aqua },
+		{ token: 'string.value.json', foreground: red },
 
-		{ token: 'attribute.name', foreground: '9CDCFE' },
-		{ token: 'attribute.value', foreground: 'CE9178' },
-		{ token: 'attribute.value.number.css', foreground: 'B5CEA8' },
-		{ token: 'attribute.value.unit.css', foreground: 'B5CEA8' },
-		{ token: 'attribute.value.hex.css', foreground: 'D4D4D4' },
+		{ token: 'attribute.name', foreground: orange },
+		{ token: 'attribute.name.css', foreground: foreground },
+		{ token: 'attribute.value', foreground: green },
+		{ token: 'attribute.value.css', foreground: green },
+		{ token: 'attribute.value.number.css', foreground: orange },
+		{ token: 'attribute.value.unit.css', foreground: orange },
+		{ token: 'attribute.value.hex.css', foreground: aqua },
 
-		{ token: 'string', foreground: 'CE9178' },
-		{ token: 'string.sql', foreground: 'FF0000' },
+		{ token: 'string', foreground: green },
+		{ token: 'string.sql', foreground: green },
 
-		{ token: 'keyword', foreground: '569CD6' },
-		{ token: 'keyword.flow', foreground: 'C586C0' },
-		{ token: 'keyword.json', foreground: 'CE9178' },
-		{ token: 'keyword.flow.scss', foreground: '569CD6' },
+		{ token: 'keyword', foreground: purple },
+		{ token: 'keyword.flow', foreground: purple },
+		{ token: 'keyword.json', foreground: orange },
+		{ token: 'keyword.flow.scss', foreground: blue },
 
 		{ token: 'operator.scss', foreground: '909090' },
 		{ token: 'operator.sql', foreground: '778899' },
@@ -58,23 +84,23 @@ module.exports = {
 		{ token: 'predefined.sql', foreground: 'FF00FF' },
 	],
   colors: {
-      "editor.background": "#282A36",
-      "editor.foreground": "#DBDBD8",
-      "foreground": "#DBDBD8",
-      "editor.lineHighlightBackground": "#3a3d4e",
-      "editor.selectionBackground": "#50556d",
-      "editorCursor.foreground": "#528BFF",
-      "editorIndentGuide.background": "#3C4049",
-      "editorLineNumber.foreground": "#636D83",
-      "editorWhitespace.foreground": "#3C4049",
-      "editorHoverWidget.background": "#21252B",
-      "editorHoverWidget.border": "#181A1F",
-      "editorSuggestWidget.background": "#21252B",
-      "editorSuggestWidget.border": "#181A1F",
-      "editorSuggestWidget.selectedBackground": "#2C313A",
-      "editorWidget.background": "#21252B",
-      "input.background": "#1B1D23",
-      "input.foreground": "#1B1D23",
+      "editor.background": "#"+background,
+      "editor.foreground": "#"+foreground,
+      "foreground": "#"+foreground,
+      "editor.lineHighlightBackground": "#"+currentLine,
+      "editor.selectionBackground": "#"+selection,
+      "editorCursor.foreground": "#"+foreground,
+      "editorIndentGuide.background": "#"+comment,
+      "editorLineNumber.foreground": "#"+comment,
+      "editorWhitespace.foreground": "#"+foreground,
+      "editorHoverWidget.background": "#"+background,
+      "editorHoverWidget.border": "#"+selection,
+      "editorSuggestWidget.background": "#"+background,
+      "editorSuggestWidget.border": "#"+currentLine,
+      "editorSuggestWidget.selectedBackground": "#"+selection,
+      "editorWidget.background": "#"+background,
+      "input.background": "#"+currentLine,
+      "input.foreground": "#"+foreground, // Text color of find & replace widget
       "input.border": "#181A1F",
       "focusBorder": "#528BFF",
       "list.activeSelectionBackground": "#2C313A",
@@ -87,7 +113,8 @@ module.exports = {
       "pickerGroup.border": "#528BFF",
       "scrollbarSlider.background": "#4E566680",
       "scrollbarSlider.activeBackground": "#747D9180",
-      "scrollbarSlider.hoverBackground": "#5A637580"
+	  "scrollbarSlider.hoverBackground": "#5A637580",
+	  "scrollbar.shadow": "#FFFFFF"
   }
 }
 

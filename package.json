@@ -1,6 +1,6 @@
 {
   "name": "vee",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A minimal code editor based on Microsoft's monaco editor.",
   "main": "main.js",
   "scripts": {
@@ -26,8 +26,7 @@
   "homepage": "https://github.com/vasanthv/vee#readme",
   "devDependencies": {
     "electron": "^2.0.5",
-    "electron-builder": "^20.22.0",
-    "prettier": "1.13.7"
+    "electron-builder": "^20.22.0"
   },
   "build": {
     "appId": "vee.editor",
@@ -128,6 +127,7 @@
   "dependencies": {
     "monaco-editor": "^0.13.1",
     "monaco-loader": "^0.13.0",
-    "mousetrap": "^1.6.2"
+    "mousetrap": "^1.6.2",
+    "prettier": "1.13.7"
   }
 }
