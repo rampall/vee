@@ -248,13 +248,17 @@ const formatFile = () => {
 };
 
 const nextOpenedFile = () => {
-	document.querySelector('header #select').style.display = 'block';
-	// toggle across the opened file
-	const currentIndex = view.getIndexById(editor.model.id);
-	let nextIndex = currentIndex + 1;
-	if (nextIndex >= view.files.length) nextIndex = 0;
+	const fileBar = document.querySelector('header #select');
+	if(fileBar.style.display == 'block'){
+		// toggle across the opened file
+		const currentIndex = view.getIndexById(editor.model.id);
+		let nextIndex = currentIndex + 1;
+		if (nextIndex >= view.files.length) nextIndex = 0;
 
-	loadModel(view.files[nextIndex].model);
+		loadModel(view.files[nextIndex].model);
+	}else{
+		fileBar.style.display = 'block';
+	}
 };
 const prevOpenedFile = () => {
 	document.querySelector('header #select').style.display = 'block';

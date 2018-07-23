@@ -94,7 +94,10 @@ ipcMain.on('format-file', (event, payload) => {
  * Client sends a message once the editor is ready
  */
 ipcMain.on('editor-loaded', event => {
-	if (initialLoadFile) mainWindow.webContents.send('load-file', initialLoadFile);
+	if (initialLoadFile) {
+		mainWindow.webContents.send('load-file', initialLoadFile);
+		initialLoadFile = undefined;
+	}
 });
 
 /**

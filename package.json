@@ -1,6 +1,6 @@
 {
   "name": "vee",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A minimal code editor based on Microsoft's monaco editor.",
   "main": "main.js",
   "scripts": {
