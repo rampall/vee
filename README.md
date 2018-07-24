@@ -5,4 +5,4 @@
 # vee
 A minimal code editor based on Microsoft's Monaco Editor.
 
-<p align=center><img src="https://i.imgur.com/wxQL3xj.png" width="620"></p>
+<p align=center><img src="https://i.imgur.com/EjUZ8b8.png" width="680"></p>
