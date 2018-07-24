@@ -111,7 +111,7 @@ const initEditor = () => {
 
 	// Disable the refresh when the focus is in editor
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_R], () => false);
-	// editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
+	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
 	// // Disable the refresh when the focus is not in editor
 	Mousetrap.bind(['command+r', 'command+shift+r'], () => false);
 
