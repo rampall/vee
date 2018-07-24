@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const prettier = require('prettier');
@@ -15,6 +15,29 @@ function createWindow() {
 	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});
+
+	const menuTemplate = [
+		{
+			label: 'Edit',
+			submenu: [
+				{ role: 'cut' },
+				{ role: 'copy' },
+				{ role: 'paste' },
+				{ type: 'separator' },
+				{ role: 'selectall' }
+			]
+		}
+	];
+	if (process.platform === 'darwin') {
+		menuTemplate.unshift({
+			label: app.getName(),
+			submenu: [
+				{ role: 'quit' }
+			]
+		});
+	}
+	const menu = Menu.buildFromTemplate(menuTemplate);
+	Menu.setApplicationMenu(menu);
 }
 
 app.on('ready', createWindow);
