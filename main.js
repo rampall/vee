@@ -4,13 +4,40 @@ const path = require('path');
 const prettier = require('prettier');
 let mainWindow, initialLoadFile;
 
+/**
+ * This Object has a mapping of the extension to language for loading the editor
+ */
+
+const extToLang = {
+	'.js': 'javascript',
+	'.css': 'css',
+	'.html': 'html',
+	'.md': 'markdown',
+	'.xml': 'xml',
+	'.json': 'json',
+	'.txt': 'plaintext',
+	'.scss': 'scss',
+	'.sql': 'sql',
+	'.ts': 'typescript',
+	'.yaml': 'yaml'
+};
+
+// Prettier configuration
+const prettierConfig = {
+	printWidth: 100,
+	tabWidth: 4,
+	useTabs: true,
+	singleQuote: true
+};
+
+
 function createWindow() {
 	mainWindow = new BrowserWindow({ width: 800, height: 720, titleBarStyle: 'hidden' });
 	mainWindow.loadFile(path.join(__dirname, 'editor/index.html'));
 
 	// Open the DevTools.
 	// if(process.env.NODE_ENV != 'production')
-	// mainWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
 
 	mainWindow.on('closed', function() {
 		mainWindow = null;
@@ -37,7 +64,7 @@ function createWindow() {
 		});
 	}
 	const menu = Menu.buildFromTemplate(menuTemplate);
-	Menu.setApplicationMenu(menu);
+	// Menu.setApplicationMenu(menu);
 }
 
 app.on('ready', createWindow);
@@ -113,6 +140,15 @@ ipcMain.on('format-file', (event, payload) => {
 	}
 });
 
+ipcMain.on('get-file-contents', (event, {id, fsPath}) => {
+	try {
+		const formattedData = prettier.format(payload.data, prettierConfig);
+		event.returnValue = { data: formattedData };
+	} catch (err) {
+		event.returnValue = { error: err };
+	}
+});
+
 /**
  * Client sends a message once the editor is ready
  */
@@ -123,28 +159,3 @@ ipcMain.on('editor-loaded', event => {
 	}
 });
 
-/**
- * This Object has a mapping of the extension to language for loading the editor
- */
-
-const extToLang = {
-	'.js': 'javascript',
-	'.css': 'css',
-	'.html': 'html',
-	'.md': 'markdown',
-	'.xml': 'xml',
-	'.json': 'json',
-	'.txt': 'plaintext',
-	'.scss': 'scss',
-	'.sql': 'sql',
-	'.ts': 'typescript',
-	'.yaml': 'yaml'
-};
-
-// Prettier configuration
-const prettierConfig = {
-	printWidth: 100,
-	tabWidth: 4,
-	useTabs: true,
-	singleQuote: true
-};

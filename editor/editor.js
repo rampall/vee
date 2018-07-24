@@ -7,6 +7,10 @@ const Mousetrap = require('mousetrap');
 const { ipcRenderer, remote } = require('electron');
 // Set a global variable for vee, editor
 let vee, editor, view;
+
+// indexed object for storing & maintaining the orginal contents from the file system
+let contents = {}; 
+
 /**
  * Memory of the editor will hold the closed files.
  */
@@ -174,6 +178,7 @@ const loadModel = model => {
 			setEditorState,
 			setSelected
 		)(model);
+	console.log(editor);
 };
 const disposeCurrentModel = () => {
 	const currentModelId = editor.model.id;
@@ -263,10 +268,12 @@ const formatFile = () => {
 	const response = ipcRenderer.sendSync('format-file', { data: editor.getValue() });
 	if (response.error) {
 		console.error(response.error);
+		const errorPosition = response.error.loc.start;
 		remote.dialog.showMessageBox({
 			title: 'Error while formatting the file',
-			message: 'Error while saving the file'
+			message: 'Error while formatting the file\nline number: '+errorPosition.line+', column: '+errorPosition.column
 		});
+		editor.setPosition(new vee.Position(errorPosition.line, errorPosition.column));
 	} else {
 		editor.setValue(response.data);
 	}
