@@ -81,3 +81,7 @@ header span#lineDetails{
     height: 100%;
     width:100%;
 }
+#editor:empty{
+    background: url(./assets/icon.png) center no-repeat;
+    opacity: 0.5;
+}
