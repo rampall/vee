@@ -36,13 +36,15 @@ const initEditor = () => {
 		contextmenu: false, // Not a fan of right click while coding
 		fontFamily: 'Hack, monospace', // looks like a decent font
 		fontSize: 13,
+		folding: true,
+		foldingStrategy: 'indentation',
+		showFoldingControls: 'always',
 		automaticLayout: true, //for adjusting the editor to the container
 		scrollbar: {
 			useShadows: false,
 			verticalScrollbarSize: 8,
 			horizontalScrollbarSize: 8
-		},
-		value: ''
+		}
 	});
 	//load the view js
 	view = require('./view')();
@@ -51,18 +53,12 @@ const initEditor = () => {
 
 	// for setting tab space
 	// editor.model.updateOptions({ tabSize: 2 });
-		
+
 	//focus the editor on initial load
 	editor.focus();
+	console.log(editor);
 
-	// Push the first model to memory
-	compose(
-		pushModelToMemory,
-		setSelected
-	)(editor.model);
-
-	// First time loaded model
-	editor.model.onDidChangeContent(modelDidChangeContent);
+	editor.model.dispose(); // Dispose the editor created model as it is causing unnecessary problems
 
 	editor.onDidChangeCursorPosition(() => {
 		const { lineNumber, column } = editor.getPosition();
@@ -70,10 +66,23 @@ const initEditor = () => {
 		view.column = column;
 	});
 
-	// Registering all the necessary key binding
+	/**
+	 * Registering all the necessary key binding
+	 */
+
+	//Opening a file
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_O], openFileInEditor);
+	Mousetrap.bind(['command+o', 'ctrl+o'], openFileInEditor);
+
+	//saving a file
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_S], saveFileInEditor);
+	Mousetrap.bind(['command+s', 'ctrl+s'], saveFileInEditor);
+
+	//Create a new file
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_N], createNewFile);
+	Mousetrap.bind(['command+n', 'ctrl+n'], createNewFile);
+
+	// close a file
 	editor.addCommand(
 		[vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_W],
 		compose(
@@ -81,33 +90,43 @@ const initEditor = () => {
 			setNextModel
 		)
 	);
+	Mousetrap.bind(
+		['command+w', 'ctrl+w'],
+		compose(
+			disposeCurrentModel,
+			setNextModel
+		)
+	);
 
+	//Format the current file in the editor
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_P], formatFile); // uses prettier to format the file
+	Mousetrap.bind(['command+p', 'ctrl+p'], formatFile);
 
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_T], prevOpenedFile);
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_T], nextOpenedFile);
 	Mousetrap.bind(['command+t', 'ctrl+t'], nextOpenedFile);
 	// editor.addCommand(vee.KeyCode.Escape, hideOpenedFiles);
 	Mousetrap.bind(['esc'], hideOpenedFiles);
-	editor.onKeyDown((e) => e.code == 'Escape' && hideOpenedFiles());
+	editor.onKeyDown(e => e.code == 'Escape' && hideOpenedFiles());
 
 	// Disable the refresh when the focus is in editor
 	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_R], () => false);
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
+	// editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
 	// // Disable the refresh when the focus is not in editor
-	Mousetrap.bind(['command+r', 'ctrl+k', 'command+shift+r', 'ctrl+shift+k'], () => false);
+	Mousetrap.bind(['command+r', 'command+shift+r'], () => false);
 
 	ipcRenderer.send('editor-loaded');
 };
 const clearEditor = m => {
-	//clear the editor before attaching any model
-	document.getElementById('editor').innerHTML = '';
+	editor.setModel(null); //clear the editor before attaching any model
 	return m; // for easy composing
 };
-const setEditorPosition = model => {
+const setEditorState = model => {
 	const file = view.getFileById(model.id);
 	editor.focus();
 	editor.setPosition(file.position);
+	editor.setScrollLeft(file.scroll.left);
+	editor.setScrollTop(file.scroll.top);
 	return model;
 };
 const createNewFile = () => {
@@ -116,7 +135,7 @@ const createNewFile = () => {
 		clearEditor,
 		attachModel,
 		pushModelToMemory,
-		setEditorPosition,
+		setEditorState,
 		setSelected
 	)({ data: '' });
 };
@@ -138,19 +157,21 @@ const createModel = file => {
 };
 const attachModel = model => {
 	// attach the model to the editor
-	editor._attachModel(model);
+	editor.setModel(model);
 	return model;
 };
 const loadModel = model => {
 	// maintain the position in memory
 	const currentModelId = editor.model.id;
-	view.getFileById(currentModelId).position = editor.getPosition();
+	const currentFile = view.getFileById(currentModelId);
+	currentFile.position = editor.getPosition();
+	currentFile.scroll = { left: editor.getScrollLeft(), top: editor.getScrollTop() };
 
 	if (currentModelId != model.id)
 		compose(
 			clearEditor,
 			attachModel,
-			setEditorPosition,
+			setEditorState,
 			setSelected
 		)(model);
 };
@@ -161,6 +182,10 @@ const disposeCurrentModel = () => {
 	editor.model.dispose();
 	return modelIndex;
 };
+const modelWillDispose = (event, arg) => {
+	console.log(event);
+	console.log(arg);
+};
 const setNextModel = prevIndex => {
 	if (view.files.length > 0) {
 		let nextIndex = prevIndex - 1;
@@ -169,7 +194,7 @@ const setNextModel = prevIndex => {
 		compose(
 			clearEditor,
 			attachModel,
-			setEditorPosition,
+			setEditorState,
 			setSelected
 		)(nextModel);
 	} else {
@@ -188,6 +213,7 @@ const pushModelToMemory = model => {
 		isSaved: model._associatedResource.scheme === 'inmemory' ? false : true,
 		selected: true,
 		position: new vee.Position(1, 1),
+		scroll: { left: 0, top: 0 },
 		model: model
 	};
 	view.files.push(file);
@@ -234,29 +260,28 @@ const saveFile = payload => {
 	}
 };
 const formatFile = () => {
-
-	const response = ipcRenderer.sendSync('format-file', {data: editor.getValue()});
-	if(response.error){
+	const response = ipcRenderer.sendSync('format-file', { data: editor.getValue() });
+	if (response.error) {
 		console.error(response.error);
 		remote.dialog.showMessageBox({
 			title: 'Error while formatting the file',
 			message: 'Error while saving the file'
 		});
-	}else{
+	} else {
 		editor.setValue(response.data);
 	}
 };
 
 const nextOpenedFile = () => {
 	const fileBar = document.querySelector('header #select');
-	if(fileBar.style.display == 'block'){
+	if (fileBar.style.display == 'block') {
 		// toggle across the opened file
 		const currentIndex = view.getIndexById(editor.model.id);
 		let nextIndex = currentIndex + 1;
 		if (nextIndex >= view.files.length) nextIndex = 0;
 
 		loadModel(view.files[nextIndex].model);
-	}else{
+	} else {
 		fileBar.style.display = 'block';
 	}
 };
@@ -283,16 +308,16 @@ const openFileInEditor = e => {
 };
 ipcRenderer.on('load-file', (event, file) => {
 	const checkFile = view.files.find(f => f.path == file.path);
-	if(checkFile){
+	if (checkFile) {
 		loadModel(checkFile.model);
-	} else{
+	} else {
 		compose(
 			createModel,
 			clearEditor,
 			attachModel,
 			pushModelToMemory,
 			setSelected,
-			setEditorPosition
+			setEditorState
 		)(file);
 	}
 });

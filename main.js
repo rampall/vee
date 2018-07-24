@@ -84,9 +84,9 @@ ipcMain.on('save-file', (event, payload) => {
 ipcMain.on('format-file', (event, payload) => {
 	try {
 		const formattedData = prettier.format(payload.data, prettierConfig);
-		event.returnValue = {data: formattedData};
+		event.returnValue = { data: formattedData };
 	} catch (err) {
-		event.returnValue = {error: err};
+		event.returnValue = { error: err };
 	}
 });
 
