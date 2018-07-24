@@ -60,8 +60,8 @@ module.exports = {
 		{ token: 'metatag.php', fontStyle: 'bold' },
 
 		{ token: 'key', foreground: aqua },
-		{ token: 'string.key.json', foreground: aqua },
-		{ token: 'string.value.json', foreground: red },
+		{ token: 'string.key.json', foreground: red },
+		{ token: 'string.value.json', foreground: green },
 
 		{ token: 'attribute.name', foreground: orange },
 		{ token: 'attribute.name.css', foreground: foreground },
