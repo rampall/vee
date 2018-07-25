@@ -34,7 +34,7 @@ const prettierConfig = {
 
 function createWindow() {
 	mainWindow = new BrowserWindow({ width: 800, height: 720, titleBarStyle: 'hidden' });
-	mainWindow.loadFile(path.join(__dirname, 'editor/index.html'));
+	mainWindow.loadFile(path.join(__dirname, 'editor/view/index.html'));
 
 	// Open the DevTools.
 	// if(process.env.NODE_ENV != 'production')

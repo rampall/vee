@@ -1,11 +1,11 @@
 @font-face {
     font-family: "Hack";
-    src: url('./assets/Hack-Regular.ttf');
+    src: url('./Hack-Regular.ttf');
 }
 @font-face {
     font-family: "Hack";
     font-style: italic;
-    src: url('./assets/Hack-Italic.ttf');
+    src: url('./Hack-Italic.ttf');
 }
 *{
     outline: 0;
@@ -83,6 +83,6 @@ header span#lineDetails{
     width:100%;
 }
 #editor:empty{
-    background: url(./assets/icon.png) center no-repeat;
+    background: url(./icon.png) center no-repeat;
     opacity: 0.5;
 }

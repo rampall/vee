@@ -1,15 +1,37 @@
 /**
  * This is the main editor file
+ *
+ * vee editor uses monaco editor for code editing.
+ * It creates just one instance of the editor and manages all the files as models.
+ *
+ * For code highlighting it mostly depends on the Monarch tokenisers which is already part of monaco editor.
+ * But for Javascript (80% of the time I code in .js files) alone I use TextMates tokenization as it is much better than the Monarch.
+ *
  */
 
+/**
+ * A common function to require files from this file.
+ */
 const path = require('path');
+const requirePath = p => require(path.join(__dirname, '../' + p));
+
 const Mousetrap = require('mousetrap');
 const { ipcRenderer, remote } = require('electron');
-const { liftOff } = require('./grammars/configure-tokenizer');
-// Set a global variable for vee, editor
+const { setJavascriptTokenizer } = requirePath('grammars/configure-tokenizer');
+
+/**
+ * Set a global variable for vee, editor
+ *
+ * vee - just a reference of the monaco object itself.
+ * editor - the instance of the crated editor. Only one editor is created throughout the lifecycle of the app.
+ * view -  is the reference of the vue.js app object,
+ */
 let vee, editor, view;
 
-// indexed object for storing & maintaining the orginal contents from the file system
+/**
+ * contents - indexed object for storing & maintaining the original contents from the file system
+ * this is mainly used to check the state (saved || unsaved) of the opened file
+ */
 let contents = {};
 
 /**
@@ -19,6 +41,7 @@ const closedTabs = [];
 
 // A simple compose function to compose an array of functions
 const compose = (...fs) => x => fs.reduce((acc, f) => f(acc), x);
+
 /**
  * This function is called when monaco editor is loaded by the AMDRequire.
  */
@@ -31,14 +54,13 @@ const editorLoaded = e => {
  * Creates the editor in the #editor div
  */
 const initEditor = () => {
-	vee.editor.defineTheme('vee', require('./theme'));
+	/**
+	 * Set the theme before initializing the editor
+	 */
+	vee.editor.defineTheme('vee', requirePath('theme'));
 	vee.editor.setTheme('vee');
 
-	// const theme = require('./theme.js');
-	// const atomOne = require('./atom-dark');
-
-	// console.log(theme(vee, atomOne));
-
+	// initiate the editor with the necessary configuration
 	editor = vee.editor.create(document.getElementById('editor'), {
 		minimap: {
 			enabled: false // I really hate the minimap and never use this
@@ -55,19 +77,20 @@ const initEditor = () => {
 			verticalScrollbarSize: 8,
 			horizontalScrollbarSize: 8
 		},
-		language: 'javascript'
+		language: 'javascript' // setting as js so that the setJavascriptTokenizer() can be initiated
 	});
-	//load the view js
-	view = require('./view')();
+	//load the app view using view js
+	view = requirePath('view/view.js')();
+
 	//make the header div visible after load
 	document.getElementById('header').style.visibility = 'visible';
 
-	// for setting tab space
+	// for setting tab space. default to 4
 	// editor.model.updateOptions({ tabSize: 2 });
 
 	//focus the editor on initial load
 	editor.focus();
-	console.log(editor);
+	console.log(editor); // for debugging purpose
 
 	editor.model.dispose(); // Dispose the editor created model as it is causing unnecessary problems
 
@@ -76,73 +99,13 @@ const initEditor = () => {
 		view.lineNumber = lineNumber;
 		view.column = column;
 	});
-	/**
-	 * Registering all the necessary key binding
-	 */
+	
+	// initiate the listeners
+	requirePath('listeners');
 
-	//Opening a file
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_O], openFileInEditor);
-	Mousetrap.bind(['command+o', 'ctrl+o'], openFileInEditor);
-
-	//saving a file
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_S], saveFileInEditor);
-	Mousetrap.bind(['command+s', 'ctrl+s'], saveFileInEditor);
-
-	//Create a new file
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_N], createNewFile);
-	Mousetrap.bind(['command+n', 'ctrl+n'], createNewFile);
-
-	// close a file
-	editor.addCommand(
-		[vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_W],
-		compose(
-			disposeCurrentModel,
-			setNextModel
-		)
-	);
-	Mousetrap.bind(
-		['command+w', 'ctrl+w'],
-		compose(
-			disposeCurrentModel,
-			setNextModel
-		)
-	);
-
-	//Format the current file in the editor
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_P], formatFile); // uses prettier to format the file
-	Mousetrap.bind(['command+p', 'ctrl+p'], formatFile);
-
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_T], prevOpenedFile);
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_T], nextOpenedFile);
-	Mousetrap.bind(['command+t', 'ctrl+t'], nextOpenedFile);
-	// editor.addCommand(vee.KeyCode.Escape, hideOpenedFiles);
-	Mousetrap.bind(['esc'], hideOpenedFiles);
-	editor.onKeyDown(e => e.code == 'Escape' && hideOpenedFiles());
-
-	// Disable the refresh when the focus is in editor
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_R], () => false);
-	editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
-	// // Disable the refresh when the focus is not in editor
-	Mousetrap.bind(['command+r', 'command+shift+r'], () => false);
-
-	ipcRenderer.send('editor-loaded');
-
-	document.addEventListener('drop', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		for (let f of e.dataTransfer.files) {
-			console.log('File(s) you dragged here: ', f.path);
-		}
-	});
-	document.addEventListener('dragover', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-	});
-
-	//add the JS tokenizer
-	//https://github.com/Microsoft/monaco-editor/issues/884#issuecomment-391706345
-	monaco.languages.typescript.getJavaScriptWorker().then(() => liftOff(vee));
+	// add the JS tokenizer
+	// https://github.com/Microsoft/monaco-editor/issues/884#issuecomment-391706345
+	monaco.languages.typescript.getJavaScriptWorker().then(() => setJavascriptTokenizer(vee));
 };
 const clearEditor = m => {
 	editor.setModel(null); //clear the editor before attaching any model
@@ -356,7 +319,8 @@ ipcRenderer.on('load-file', (event, file) => {
 	}
 });
 
+/**
+ * Using monaco-loader module to load the editor
+ * Reason: monaco editor uses a built in loader function. Normal require wont work
+ */
 require('monaco-loader')().then(editorLoaded);
-
-// https://github.com/Binaryify/OneDark-Pro/blob/master/themes/OneDark-Pro-vivid.json
-// https://gist.github.com/developit/a0430c500f5559b715c2dddf9c40948d

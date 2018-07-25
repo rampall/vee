@@ -1,4 +1,27 @@
-const monacoTextmate1 = require('monaco-textmate');
+/**
+ * Some parts of this file is borrowed from https://github.com/CompuIves/codesandbox-client
+ *
+ * https://github.com/CompuIves/codesandbox-client/tree/master/packages/app/src/app/components/CodeEditor/Monaco/grammars
+ */
+
+/**
+ * CodeSandbox. An online code editor tailored for web application development.
+ * Copyright (C) 2018  Ives van Hoorne
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+const monacoTextmate = require('monaco-textmate');
 
 class TokenizerState {
   constructor(_ruleStack) {
@@ -35,10 +58,8 @@ function wireTmGrammars(monaco, registry, languages) {
     Array.from(languages.keys()).map(async languageId => {
       try {
         const grammar = await registry.loadGrammar(languages.get(languageId));
-
-        console.log(languageId);
         monaco.languages.setTokensProvider(languageId, {
-          getInitialState: () => new TokenizerState(monacoTextmate1.INITIAL),
+          getInitialState: () => new TokenizerState(monacoTextmate.INITIAL),
           tokenize: (line, state) => {
             const res = grammar.tokenizeLine(line, state.ruleStack);
 
