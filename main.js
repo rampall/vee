@@ -19,7 +19,8 @@ const extToLang = {
 	'.scss': 'scss',
 	'.sql': 'sql',
 	'.ts': 'typescript',
-	'.yaml': 'yaml'
+	'.yaml': 'yaml',
+	'.sh': 'shell'
 };
 
 // Prettier configuration

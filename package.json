@@ -127,7 +127,9 @@
   "dependencies": {
     "monaco-editor": "^0.13.1",
     "monaco-loader": "^0.13.0",
+    "monaco-textmate": "^3.0.0",
     "mousetrap": "^1.6.2",
+    "onigasm": "^2.2.1",
     "prettier": "1.13.7"
   }
 }

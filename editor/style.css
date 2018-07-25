@@ -16,7 +16,7 @@ html{
 }
 body{
     height: 100%;
-    background: #20222b;
+    background: #21252b;
     color: #CDCDC9;
     margin:0px;
     overflow: hidden;
@@ -36,7 +36,7 @@ header #select{
     top:7px;
     right:8px;
     bottom: 0px;
-    background: #20222b;
+    background: #21252b;
     z-index: 5;
     min-width:150px;
     min-height: 100%;
@@ -45,6 +45,7 @@ header #select{
     text-align: left;
     display: none;
     list-style: none;
+    box-shadow: -2px 0px 2px 1px #21252b;
 }
 header #select li{
     display: block;
@@ -53,7 +54,7 @@ header #select li{
     cursor: pointer;
 }
 header #select li.selected, header #select li:hover{
-    background: #313342;
+    background: #2c313a;
 }
 header .file{
     font-size: 13px;

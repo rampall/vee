@@ -5,11 +5,12 @@
 const path = require('path');
 const Mousetrap = require('mousetrap');
 const { ipcRenderer, remote } = require('electron');
+const { liftOff } = require('./grammars/configure-tokenizer');
 // Set a global variable for vee, editor
 let vee, editor, view;
 
 // indexed object for storing & maintaining the orginal contents from the file system
-let contents = {}; 
+let contents = {};
 
 /**
  * Memory of the editor will hold the closed files.
@@ -33,6 +34,11 @@ const initEditor = () => {
 	vee.editor.defineTheme('vee', require('./theme'));
 	vee.editor.setTheme('vee');
 
+	// const theme = require('./theme.js');
+	// const atomOne = require('./atom-dark');
+
+	// console.log(theme(vee, atomOne));
+
 	editor = vee.editor.create(document.getElementById('editor'), {
 		minimap: {
 			enabled: false // I really hate the minimap and never use this
@@ -48,7 +54,8 @@ const initEditor = () => {
 			useShadows: false,
 			verticalScrollbarSize: 8,
 			horizontalScrollbarSize: 8
-		}
+		},
+		language: 'javascript'
 	});
 	//load the view js
 	view = require('./view')();
@@ -69,7 +76,6 @@ const initEditor = () => {
 		view.lineNumber = lineNumber;
 		view.column = column;
 	});
-
 	/**
 	 * Registering all the necessary key binding
 	 */
@@ -120,6 +126,23 @@ const initEditor = () => {
 	Mousetrap.bind(['command+r', 'command+shift+r'], () => false);
 
 	ipcRenderer.send('editor-loaded');
+
+	document.addEventListener('drop', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		for (let f of e.dataTransfer.files) {
+			console.log('File(s) you dragged here: ', f.path);
+		}
+	});
+	document.addEventListener('dragover', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	});
+
+	//add the JS tokenizer
+	//https://github.com/Microsoft/monaco-editor/issues/884#issuecomment-391706345
+	monaco.languages.typescript.getJavaScriptWorker().then(() => liftOff(vee));
 };
 const clearEditor = m => {
 	editor.setModel(null); //clear the editor before attaching any model
@@ -271,7 +294,11 @@ const formatFile = () => {
 		const errorPosition = response.error.loc.start;
 		remote.dialog.showMessageBox({
 			title: 'Error while formatting the file',
-			message: 'Error while formatting the file\nline number: '+errorPosition.line+', column: '+errorPosition.column
+			message:
+				'Error while formatting the file\nline number: ' +
+				errorPosition.line +
+				', column: ' +
+				errorPosition.column
 		});
 		editor.setPosition(new vee.Position(errorPosition.line, errorPosition.column));
 	} else {
