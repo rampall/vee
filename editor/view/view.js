@@ -21,13 +21,13 @@ module.exports = () => {
             },
             getViewFile: function (file)  {
                 if(file){
-                    const filePath = file.path && parse(file.path);
-                    return (file.isSaved ? '' : '*') + (filePath ? filePath.base : "new");
+                    const filePath = file.fsPath && parse(file.fsPath);
+                    return (file.state.isSaved ? '' : '*') + (filePath ? filePath.base : "new");
                 }
             },
             getViewDir: function (file)  {
                 if(file){
-                    const filePath = file.path && parse(file.path);
+                    const filePath = file.fsPath && parse(file.fsPath);
                     return filePath ? " - "+filePath.dir.split('/').reverse()[0] : "";
                 }
             },
@@ -35,7 +35,7 @@ module.exports = () => {
                 return this.files.find(f => f.selected == true);
             },
             fileClick: function (file) {
-                loadModel(file.model);
+                // loadModelById(file.id);
             }
           }
     });    

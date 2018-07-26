@@ -3,64 +3,91 @@
  * this included key bindings,  ipc Messages etc
  */
 
-//Opening a file
-editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_O], openFileInEditor);
-Mousetrap.bind(['command+o', 'ctrl+o'], openFileInEditor);
+/**
+ * Opening a file
+ * key bindings
+ * ⌘+o || Ctrl+o
+ */
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_O], open);
+Mousetrap.bind(['command+o', 'ctrl+o'], open);
 
-//saving a file
-editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_S], saveFileInEditor);
-Mousetrap.bind(['command+s', 'ctrl+s'], saveFileInEditor);
+// listen for load file message from main thread
+ipcRenderer.on('load-file', loadFile);
 
-//Create a new file
-editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_N], createNewFile);
-Mousetrap.bind(['command+n', 'ctrl+n'], createNewFile);
+/**
+ * Create a new file
+ * key bindings
+ * ⌘+n || Ctrl+n
+ */
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_N], createNew);
+Mousetrap.bind(['command+n', 'ctrl+n'], createNew);
 
-// close a file
-editor.addCommand(
-	[vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_W],
-	compose(
-		disposeCurrentModel,
-		setNextModel
-	)
-);
-Mousetrap.bind(
-	['command+w', 'ctrl+w'],
-	compose(
-		disposeCurrentModel,
-		setNextModel
-	)
-);
+/**
+ * Save the current file in the editor
+ * key bindings
+ * ⌘+s || Ctrl+s
+ */
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_S], save);
+Mousetrap.bind(['command+s', 'ctrl+s'], save);
 
-//Format the current file in the editor
-editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_P], formatFile); // uses prettier to format the file
-Mousetrap.bind(['command+p', 'ctrl+p'], formatFile);
+/**
+ * Close the current file in the editor
+ * key bindings
+ * ⌘+w || Ctrl+w
+ */
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_W], close);
+Mousetrap.bind(['command+w', 'ctrl+w'], close);
 
-editor.addCommand([vee.KeyMod.WinCtrl | vee.KeyMod.Shift | vee.KeyCode.Tab], prevOpenedFile);
-Mousetrap.bind(['ctrl+shift+tab'], prevOpenedFile);
+/**
+ * Format the current file in the editor
+ * uses prettier to format the file
+ * key bindings
+ * ⌘+p || Ctrl+p
+ */
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_P], format);
+Mousetrap.bind(['command+p', 'ctrl+p'], format);
 
-editor.addCommand([vee.KeyMod.WinCtrl | vee.KeyCode.Tab], nextOpenedFile);
-Mousetrap.bind(['ctrl+tab'], nextOpenedFile);
-// editor.addCommand(vee.KeyCode.Escape, hideOpenedFiles);
-Mousetrap.bind(['esc'], hideOpenedFiles);
-editor.onKeyDown(e => e.code == 'Escape' && hideOpenedFiles());
+/**
+ * Moves to the next file
+ * key bindings
+ * Ctrl+Tab
+ */
+editor.addCommand([vee.KeyMod.WinCtrl | vee.KeyCode.Tab], toggle);
+Mousetrap.bind(['ctrl+tab'], toggle);
 
-// Disable the refresh when the focus is in editor
-editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_R], () => false);
-editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
-// // Disable the refresh when the focus is not in editor
-Mousetrap.bind(['command+r', 'command+shift+r'], () => false);
+/**
+ * Moves to the previous file
+ * key bindings
+ * Shift+Ctrl+Tab
+ */
+editor.addCommand([vee.KeyMod.WinCtrl | vee.KeyMod.Shift | vee.KeyCode.Tab], toggleReverse);
+Mousetrap.bind(['ctrl+shift+tab'], toggleReverse);
 
-ipcRenderer.send('editor-loaded');
+/**
+ * Hides the widgets
+ * find & replace | sidebar
+ */
+Mousetrap.bind(['esc'], hideSideBar);
+editor.onKeyDown(e => e.code == 'Escape' && hideSideBar());
 
+/**
+ * Read file path from the drop event & load the files
+ */
 document.addEventListener('drop', function(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
 	for (let f of e.dataTransfer.files) {
-		console.log('File(s) you dragged here: ', f.path);
+		ipcRenderer.send('load-file', f.path);
 	}
 });
 document.addEventListener('dragover', function(e) {
 	e.preventDefault();
 	e.stopPropagation();
 });
+
+// Disable the refresh when the focus is in editor
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyCode.KEY_R], () => false);
+editor.addCommand([vee.KeyMod.CtrlCmd | vee.KeyMod.Shift | vee.KeyCode.KEY_R], () => false);
+// // Disable the refresh when the focus is not in editor
+Mousetrap.bind(['command+r', 'command+shift+r'], () => false);
