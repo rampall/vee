@@ -36,6 +36,7 @@ module.exports = () => {
             },
             fileClick: function (file) {
 				compose(
+                    updateModelState,
 					setModel,
 					setEditorState,
 					selectFile

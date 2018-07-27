@@ -164,11 +164,14 @@ const updateModel = (model, fsPath) => {
 /**
  * gets the current state of the model in the editor and update it in the view.files
  */
-const updateModelState = () => {
-	// get the file from view.files
-	const currentFile = view.getFileById(editor.model.id);
-	currentFile.state.position = editor.getPosition();
-	currentFile.state.scroll = { left: editor.getScrollLeft(), top: editor.getScrollTop() };
+const updateModelState = m => {
+	if (editor.model) {
+		// get the file from view.files
+		const currentFile = view.getFileById(editor.model.id);
+		currentFile.state.position = editor.getPosition();
+		currentFile.state.scroll = { left: editor.getScrollLeft(), top: editor.getScrollTop() };
+	}
+	return m; // get & return the model. for composing purpose
 };
 /**
  * Get the state from view.files and set it to the editor
@@ -256,12 +259,14 @@ const loadFile = (event, payload) => {
 	let thisModel;
 	if (modelId) {
 		thisModel = compose(
+			updateModelState,
 			setModel,
 			setEditorState,
 			selectFile
 		)(getModel(modelId));
 	} else {
 		thisModel = compose(
+			updateModelState,
 			createModel,
 			setModel,
 			createFile,
@@ -286,6 +291,7 @@ const open = () => {
  */
 const createNew = () => {
 	compose(
+		updateModelState,
 		createModel,
 		setModel,
 		createFile,
@@ -319,7 +325,6 @@ const save = () => {
  * Closes the current file in the editor
  */
 const close = () => {
-
 	//a function to perform the actual close
 	const performClose = () => {
 		const modelIndex = view.getIndexById(editor.model.id); //get the model index of files
@@ -336,6 +341,7 @@ const close = () => {
 			if (nextIndex >= 0) {
 				const nextModel = getModel(view.files[nextIndex].id);
 				compose(
+					updateModelState,
 					setModel,
 					setEditorState,
 					selectFile
@@ -344,7 +350,6 @@ const close = () => {
 			}
 		}
 	};
-
 
 	if (view.getFileById(editor.model.id).state.isSaved == false) {
 		remote.dialog.showMessageBox(
@@ -367,7 +372,7 @@ const close = () => {
 				console.log(response);
 			}
 		);
-	}else{
+	} else {
 		performClose();
 	}
 };
@@ -389,6 +394,7 @@ const toggle = isReverse => {
 		}
 
 		compose(
+			updateModelState,
 			setModel,
 			setEditorState,
 			selectFile
