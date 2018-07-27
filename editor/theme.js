@@ -347,6 +347,8 @@ module.exports = {
 			token: 'string.other.link',
 			foreground: 'E06C75'
 		},
+		{ token: 'string.key.json', foreground: 'E06C75' },
+		{ token: 'string.value.json', foreground: '98C379' },
 		{
 			token: 'punctuation.definition.comment',
 			foreground: '5C6370'
