@@ -319,29 +319,8 @@ const save = () => {
  * Closes the current file in the editor
  */
 const close = () => {
-	if (view.getFileById(editor.model.id).state.isSaved == false) {
-		remote.dialog.showMessageBox(
-			{
-				message: 'This file is not yet saved',
-				buttons: ['Save', 'Cancel', "Don't Save"]
-			},
-			response => {
-				switch (response) {
-					case 0:
-						save();
-						performClose();
-						break;
-					case 2:
-						performClose();
-						break;
-					default:
-						break;
-				}
-				console.log(response);
-			}
-		);
-	}
 
+	//a function to perform the actual close
 	const performClose = () => {
 		const modelIndex = view.getIndexById(editor.model.id); //get the model index of files
 
@@ -365,6 +344,32 @@ const close = () => {
 			}
 		}
 	};
+
+
+	if (view.getFileById(editor.model.id).state.isSaved == false) {
+		remote.dialog.showMessageBox(
+			{
+				message: 'This file is not yet saved',
+				buttons: ['Save', 'Cancel', "Don't Save"]
+			},
+			response => {
+				switch (response) {
+					case 0:
+						save();
+						performClose();
+						break;
+					case 2:
+						performClose();
+						break;
+					default:
+						break;
+				}
+				console.log(response);
+			}
+		);
+	}else{
+		performClose();
+	}
 };
 /**
  * toggles the file in forward/backward fashion
@@ -374,7 +379,6 @@ const toggle = isReverse => {
 	if (fileBar.style.display == 'block') {
 		// toggle across the opened file
 		const currentIndex = view.getIndexById(editor.model.id);
-		console.log(isReverse);
 		let nextIndex;
 		if (isReverse === true) {
 			nextIndex = currentIndex - 1;
@@ -433,219 +437,11 @@ const format = () => {
 	}
 };
 
-/**
- * Hide the sidebar
- */
+//Hide the sidebar
 const hideSideBar = () => {
 	document.querySelector('header #select').style.display = 'none';
 	return true;
 };
-
-// // const clearEditor = m => {
-// // 	editor.setModel(null); //clear the editor before attaching any model
-// // 	return m; // for easy composing
-// // };
-// // const setEditorState = model => {
-// // 	const file = view.getFileById(model.id);
-// // 	editor.focus();
-// // 	editor.setPosition(file.position);
-// // 	editor.setScrollLeft(file.scroll.left);
-// // 	editor.setScrollTop(file.scroll.top);
-// // 	return model;
-// // };
-// const createNewFile = () => {
-// 	compose(
-// 		createModel,
-// 		clearEditor,
-// 		attachModel,
-// 		pushModelToMemory,
-// 		setEditorState,
-// 		setSelected
-// 	)({ data: '' });
-// };
-
-// /**
-//  * Creates a model
-//  * - sets a listener for content change
-//  * returns a model
-//  */
-// // const createModel = file => {
-// // 	// create the model from the received file.
-// // 	const model = vee.editor.createModel(
-// // 		file.data ? file.data : '',
-// // 		file.language ? file.language : undefined,
-// // 		file.path ? vee.Uri.parse(file.path) : undefined
-// // 	);
-// // 	model.onDidChangeContent(modelDidChangeContent);
-// // 	return model;
-// // };
-// // const attachModel = model => {
-// // 	// attach the model to the editor
-// // 	editor.setModel(model);
-// // 	return model;
-// // };
-// const loadModel = model => {
-// 	// maintain the position in memory
-// 	const currentModelId = editor.model.id;
-// 	const currentFile = view.getFileById(currentModelId);
-// 	currentFile.position = editor.getPosition();
-// 	currentFile.scroll = { left: editor.getScrollLeft(), top: editor.getScrollTop() };
-
-// 	if (currentModelId != model.id)
-// 		compose(
-// 			clearEditor,
-// 			attachModel,
-// 			setEditorState,
-// 			setSelected
-// 		)(model);
-// 	console.log(editor);
-// };
-// // const disposeCurrentModel = () => {
-// // 	const currentModelId = editor.model.id;
-// // 	const modelIndex = view.getIndexById(currentModelId);
-// // 	view.files.splice(modelIndex, 1);
-// // 	editor.model.dispose();
-// // 	return modelIndex;
-// // };
-// // const modelWillDispose = (event, arg) => {
-// // 	console.log(event);
-// // 	console.log(arg);
-// // };
-
-// const setNextModel = prevIndex => {
-// 	if (view.files.length > 0) {
-// 		let nextIndex = prevIndex - 1;
-// 		nextIndex = nextIndex < 0 ? 0 : nextIndex;
-// 		const nextModel = view.files[nextIndex].model;
-// 		compose(
-// 			clearEditor,
-// 			attachModel,
-// 			setEditorState,
-// 			setSelected
-// 		)(nextModel);
-// 	} else {
-// 		//create an empty model and assign it
-// 		createNewFile();
-// 	}
-// };
-
-// const pushModelToMemory = model => {
-// 	const file = {
-// 		id: model.id,
-// 		path:
-// 			model._associatedResource.scheme === 'inmemory'
-// 				? undefined
-// 				: model._associatedResource.fsPath,
-// 		isSaved: model._associatedResource.scheme === 'inmemory' ? false : true,
-// 		selected: true,
-// 		position: new vee.Position(1, 1),
-// 		scroll: { left: 0, top: 0 },
-// 		model: model
-// 	};
-// 	view.files.push(file);
-// 	return model;
-// };
-
-// const saveFileInEditor = () => {
-// 	const file = view.getFileById(editor.model.id);
-// 	if (!file.path) {
-// 		const filePath = remote.dialog.showSaveDialog();
-// 		if (!filePath) return;
-// 		file.model._associatedResource = vee.Uri.parse(filePath);
-// 		file.path = filePath;
-// 	}
-// 	saveFile({
-// 		modelId: file.id, // for updating the model
-// 		path: file.path,
-// 		data: editor.getValue()
-// 	});
-
-// 	return false;
-// };
-
-// const saveFile = payload => {
-// 	//save file synchronously to avoid race condtion
-// 	const response = ipcRenderer.sendSync('save-file', payload);
-// 	if (response.error) {
-// 		console.error(response.error);
-// 		remote.dialog.showMessageBox({
-// 			title: 'Error while saving the file',
-// 			message: 'Error while saving the file'
-// 		});
-// 	} else {
-// 		const file = view.getFileById(response.id);
-// 		vee.editor.setModelLanguage(file.model, response.language); // set the language of the save file
-// 		file.isSaved = true; // mark the file as saved
-// 	}
-// };
-// const formatFile = () => {
-// 	const response = ipcRenderer.sendSync('format-file', { data: editor.getValue() });
-// 	if (response.error) {
-// 		console.error(response.error);
-// 		const errorPosition = response.error.loc.start;
-// 		remote.dialog.showMessageBox({
-// 			title: 'Error while formatting the file',
-// 			message:
-// 				'Error while formatting the file\nline number: ' +
-// 				errorPosition.line +
-// 				', column: ' +
-// 				errorPosition.column
-// 		});
-// 		editor.setPosition(new vee.Position(errorPosition.line, errorPosition.column));
-// 	} else {
-// 		editor.setValue(response.data);
-// 	}
-// };
-
-// const nextOpenedFile = () => {
-// 	const fileBar = document.querySelector('header #select');
-// 	if (fileBar.style.display == 'block') {
-// 		// toggle across the opened file
-// 		const currentIndex = view.getIndexById(editor.model.id);
-// 		let nextIndex = currentIndex + 1;
-// 		if (nextIndex >= view.files.length) nextIndex = 0;
-
-// 		loadModel(view.files[nextIndex].model);
-// 	} else {
-// 		fileBar.style.display = 'block';
-// 	}
-// };
-// const prevOpenedFile = () => {
-// 	document.querySelector('header #select').style.display = 'block';
-// 	// toggle across the opened file
-// 	const currentIndex = view.getIndexById(editor.model.id);
-// 	let prevIndex = currentIndex - 1;
-// 	if (prevIndex < 0) prevIndex = view.files.length - 1;
-
-// 	loadModel(view.files[prevIndex].model);
-// };
-
-// const hideOpenedFiles = () => {
-// 	document.querySelector('header #select').style.display = 'none';
-// 	return true;
-// };
-// const modelDidChangeContent = () => {
-// 	view.getFileById(editor.model.id).isSaved = false;
-// };
-// const openFileInEditor = e => {
-// 	ipcRenderer.send('open-file');
-// 	return false;
-// };
-// ipcRenderer.on('load-file', (event, file) => {
-// 	const checkFile = view.files.find(f => f.path == file.path);
-// 	if (checkFile) {
-// 		loadModel(checkFile.model);
-// 	} else {
-// 		compose(
-// 			createModel,
-// 			clearEditor,
-// 			attachModel,
-// 			pushModelToMemory,
-// 			setSelected,
-// 			setEditorState
-// 		)(file);
-// 	}
-// });
 
 /**
  * Using monaco-loader module to load the editor

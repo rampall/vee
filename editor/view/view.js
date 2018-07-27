@@ -35,7 +35,11 @@ module.exports = () => {
                 return this.files.find(f => f.selected == true);
             },
             fileClick: function (file) {
-                // loadModelById(file.id);
+				compose(
+					setModel,
+					setEditorState,
+					selectFile
+				)(getModel(file.id));
             }
           }
     });    
