@@ -42,7 +42,7 @@ function createWindow() {
 
 	// Open the DevTools.
 	// if(process.env.NODE_ENV != 'production')
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 
 	mainWindow.on('closed', function() {
 		mainWindow = null;
