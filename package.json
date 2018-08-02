@@ -37,42 +37,71 @@
       "icon": "./build/icon.icns",
       "fileAssociations": [
         {
-          "ext": ["js", "ts", "jsx"],
+          "ext": [
+            "js",
+            "ts",
+            "jsx"
+          ],
           "role": "Editor",
           "icon": "./javascript.icns"
         },
         {
-          "ext": ["css", "scss", "less"],
+          "ext": [
+            "css",
+            "scss",
+            "less"
+          ],
           "role": "Editor",
           "icon": "./css.icns"
         },
         {
-          "ext": ["html"],
+          "ext": [
+            "html"
+          ],
           "role": "Editor",
           "icon": "./html.icns"
         },
         {
-          "ext": ["xml", "xhtml"],
+          "ext": [
+            "xml",
+            "xhtml"
+          ],
           "role": "Editor",
           "icon": "./xml.icns"
         },
         {
-          "ext": ["json"],
+          "ext": [
+            "json"
+          ],
           "role": "Editor",
           "icon": "./json.icns"
         },
         {
-          "ext": ["md"],
+          "ext": [
+            "md"
+          ],
           "role": "Editor",
           "icon": "./markdown.icns"
         },
         {
-          "ext": ["sql", "dat", "data", "db"],
+          "ext": [
+            "sql",
+            "dat",
+            "data",
+            "db"
+          ],
           "role": "Editor",
           "icon": "./database.icns"
         },
         {
-          "ext": ["sh", "log", "txt", "map", "php", "*"],
+          "ext": [
+            "sh",
+            "log",
+            "txt",
+            "map",
+            "php",
+            "*"
+          ],
           "role": "Editor"
         }
       ]

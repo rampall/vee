@@ -17,6 +17,7 @@ const extToLang = {
 	'.js': 'javascript',
 	'.css': 'css',
 	'.html': 'html',
+	'.svg': 'html',
 	'.md': 'markdown',
 	'.xml': 'xml',
 	'.json': 'json',
